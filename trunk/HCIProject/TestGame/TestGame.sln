@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGame", "TestGame\TestGame\TestGame.csproj", "{2072975A-5570-4E41-A343-EEC7EEB65148}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "TestGameContent", "TestGame\TestGameContent\TestGameContent.contentproj", "{A161CDE0-E1B9-433F-9551-D9F963193923}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keyboard", "..\Keyboard\Keyboard\Keyboard.csproj", "{76F63E2D-E553-4542-97F0-DE5C29DEBCB3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2072975A-5570-4E41-A343-EEC7EEB65148}.Debug|x86.ActiveCfg = Debug|x86
+		{2072975A-5570-4E41-A343-EEC7EEB65148}.Debug|x86.Build.0 = Debug|x86
+		{2072975A-5570-4E41-A343-EEC7EEB65148}.Release|x86.ActiveCfg = Release|x86
+		{2072975A-5570-4E41-A343-EEC7EEB65148}.Release|x86.Build.0 = Release|x86
+		{A161CDE0-E1B9-433F-9551-D9F963193923}.Debug|x86.ActiveCfg = Debug|x86
+		{A161CDE0-E1B9-433F-9551-D9F963193923}.Release|x86.ActiveCfg = Release|x86
+		{76F63E2D-E553-4542-97F0-DE5C29DEBCB3}.Debug|x86.ActiveCfg = Debug|x86
+		{76F63E2D-E553-4542-97F0-DE5C29DEBCB3}.Debug|x86.Build.0 = Debug|x86
+		{76F63E2D-E553-4542-97F0-DE5C29DEBCB3}.Release|x86.ActiveCfg = Release|x86
+		{76F63E2D-E553-4542-97F0-DE5C29DEBCB3}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
