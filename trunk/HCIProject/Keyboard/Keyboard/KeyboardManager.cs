@@ -14,14 +14,15 @@ namespace Keyboard
         private static bool Active;
         private static Keyboard CurrentKeyboard;
 
-
         public static bool IsActive { get { return Active; } }
         public static void Initialize(ContentManager content)
         {
             KeyboardTextures Textures = new KeyboardTextures()
             {
                 Frame = content.Load<Texture2D>("Keyboard/Graphics/Frame"),
-                Fade = content.Load<Texture2D>("Keyboard/Graphics/Fade")
+                Fade = content.Load<Texture2D>("Keyboard/Graphics/Fade"),
+                BackCircle = content.Load<Texture2D>("Keyboard/backcircle"),
+                Key = content.Load<Texture2D>("Keyboard/key")
             };
 
             KeyboardColors Colors = new KeyboardColors()
@@ -30,7 +31,10 @@ namespace Keyboard
                 Fade = new Color(238, 186, 255)
             };
 
-            CurrentKeyboard = new Keyboard(Textures,Colors);
+            //you handle sprites in a different way than I, so I was a bit confused.
+            //thus if you want to make a wraper for font like you did for sprites
+            //feel free, but this is my current quick and dirty font implamentation.
+            CurrentKeyboard = new Keyboard(Textures,Colors, content.Load<SpriteFont>("Keyboard/Courier New"));
             Active = false;
         }
 

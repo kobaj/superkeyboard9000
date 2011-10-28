@@ -11,14 +11,17 @@ namespace Keyboard
     {
         public Vector2 FramePosition;
         Sprite Frame;
-
-        
+        public readonly int Width;
+        public readonly int Height;
 
         public KeyboardFrame(int x, int y, Texture2D background, Color color)
         {
             FramePosition = new Vector2(x, y);
             Frame = new Sprite(background, FramePosition);
             Frame.Color = color;
+
+            Width = Frame.Width;
+            Height = Frame.Height;
         }
 
         public void Update(GameTime gameTime)
