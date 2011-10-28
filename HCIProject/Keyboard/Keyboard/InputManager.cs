@@ -7,6 +7,77 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Keyboard
 {
+    public class polar
+    {
+        public static Vector2 PolarToXY(polar input)
+        {
+            //I've lost points on tests for using the name "returnable"
+            //yes its a stupid thing to do.
+            //but its a habit I can't break for some reason.
+            Vector2 returnable = new Vector2();
+
+            returnable.X = (float)(input.getRadius() * Math.Cos(input.getAngle()));
+            returnable.Y = (float)(input.getRadius() * Math.Sin(input.getAngle()));
+
+            return returnable;
+        }
+
+        private double radius; //this is the length
+        private double angle; //this is the radian
+
+        public double getRadius()
+        {
+            return radius;
+        }
+
+        public void setRadius(double rad)
+        {
+            radius = rad;
+        }
+
+        public double getAngle()
+        {
+            return angle;
+        }
+
+        public void setAngle(double ang)
+        {
+            if (ang >= 0 && ang < (Math.PI * 2.0D))
+            {
+                angle = ang;
+                return;
+            }
+
+            //"tricky" math to make sure our angle is always between 0 and 2pi.
+            double multiplicity = ang / (Math.PI * 2.0D);
+            multiplicity = multiplicity - Math.Floor(multiplicity);
+
+            angle = multiplicity * (Math.PI * 2.0D);
+        }
+
+        public double getDegree()
+        {
+            return angle * (180.0D / Math.PI);
+        }
+
+        public void setDegree(double deg)
+        {
+            setAngle(deg * (Math.PI / 180.0D));
+        }
+
+        public polar()
+        {
+            radius = 0.0D;
+            angle = 0.0D;
+        }
+
+        public polar(float rad, float ang)
+        {
+            setRadius(rad);
+            setAngle(ang);
+        }
+    }
+
     public static class InputManager
     {
         public const float stickThreshold = .7f;
@@ -96,7 +167,22 @@ namespace Keyboard
 
         }
 
+        //I work better in polar >.>
+        public static polar GetLeftPolar(PlayerIndex player)
+        {
+            polar myRad = new polar();
 
+            myRad.setRadius(Math.Sqrt(GetLeftStickX(player) * GetLeftStickX(player) +
+                GetLeftStickY(player) * GetLeftStickY(player)));
+
+            double tempangle = Math.Atan(-GetLeftStickY(player) / GetLeftStickX(player)) + (Math.PI / 2.0D);
+
+            if(GetLeftStickX(player) < 0.0f)
+                tempangle += Math.PI;
+            myRad.setAngle(tempangle);
+
+            return myRad;
+        }
 
         public static float GetLeftStickX(PlayerIndex player)
         {
@@ -225,7 +311,7 @@ namespace Keyboard
             return DPadDownPressed(player) || DownAnalogPressed(player);
         }
 
-
+        //what are the min and max values? is it just 0 and 100?
         public static void SetRumble(PlayerIndex player,float left, float right)
         {
             GamePad.SetVibration(player, left, right);

@@ -11,5 +11,8 @@ namespace Keyboard
         public Texture2D Frame;
         public Texture2D Fade;
         //Add more textures as necessary
+        //that I will
+        public Texture2D BackCircle;
+        public Texture2D Key;
     }
 }
