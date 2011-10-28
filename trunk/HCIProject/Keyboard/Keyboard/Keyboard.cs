@@ -140,7 +140,8 @@ namespace Keyboard
                 Key.Color = new Color(200, 130, 130, 130);
 
                 //remove a key to our typed messege
-                WhatTyped = WhatTyped.Remove(WhatTyped.Length - 1, 1);
+                if(WhatTyped.Length > 0)
+                    WhatTyped = WhatTyped.Remove(WhatTyped.Length - 1, 1);
             }
         }
 
