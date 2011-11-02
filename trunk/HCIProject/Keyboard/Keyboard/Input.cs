@@ -188,6 +188,8 @@ namespace Keyboard
             rx = currentState.ThumbSticks.Right.X;
             ry = currentState.ThumbSticks.Right.Y;
 
+            lt = currentState.Triggers.Left;
+            rt = currentState.Triggers.Right;
 
         }
 
