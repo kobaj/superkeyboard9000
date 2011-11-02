@@ -13,8 +13,11 @@ namespace Keyboard
     {
         public int Width { get { return Texture!=null?Texture.Width:0; } }
         public int Height { get { return Texture!=null?Texture.Height:0; } }
+        public Vector2 Center { get { return Position + Origin / 2; } }
+
 
         public Texture2D Texture;
+     
         public Vector2 Position = Vector2.Zero;
         public Rectangle? SourceRect = null;
         public Rectangle? Destination = null;

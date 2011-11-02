@@ -21,14 +21,23 @@ namespace Keyboard
             {
                 Frame = content.Load<Texture2D>("Keyboard/Graphics/Frame"),
                 Fade = content.Load<Texture2D>("Keyboard/Graphics/Fade"),
-                BackCircle = content.Load<Texture2D>("Keyboard/backcircle"),
-                Key = content.Load<Texture2D>("Keyboard/key")
+                BackCircle = content.Load<Texture2D>("Keyboard/Graphics/backcircle"),
+                Key = content.Load<Texture2D>("Keyboard/Graphics/key"),
+                LTrigger = content.Load<Texture2D>("Keyboard/Graphics/lTrigger"),
+                RTrigger = content.Load<Texture2D>("Keyboard/Graphics/rTrigger")
             };
 
+            //Blue scheme
             KeyboardColors Colors = new KeyboardColors()
             {
-                Frame = new Color(100, 110, 165),
-                Fade = new Color(238, 186, 255)
+                Frame = new Color(14, 83, 167),
+                Fade = new Color(104,153,211),
+                BackCircle = new Color(4, 52, 108),
+                Key = new Color(66,132,211),
+                CurrentKey = new Color(39,78,125),
+                KeyText = Color.White,
+                InputText = Color.Black,
+                CurrentKeyPressed = new Color(27, 34, 114) //Leaving this the same as current key for now
             };
 
             //you handle sprites in a different way than I, so I was a bit confused.

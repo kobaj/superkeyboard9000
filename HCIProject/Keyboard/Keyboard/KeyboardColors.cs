@@ -10,6 +10,13 @@ namespace Keyboard
     {
         public Color Frame;
         public Color Fade;
+        public Color BackCircle;
+        public Color Key;
+        public Color CurrentKey;
+        public Color CurrentKeyPressed;
+        public Color KeyText;
+        public Color InputText;
+
         //Add more as necessary
     }
 }
