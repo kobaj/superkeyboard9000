@@ -14,8 +14,13 @@ namespace Keyboard
     public class Keyboard : RenderArea
     {
         public const double magicNumber = Math.PI / 13.0D; // 0.24166096923076923076923076923077D; //2pi / 26;
+        public const int TextBoxSize = 700;
+        public const double CursorFlashTimerSetting = 550;
         public static Vector2 LTriggerOffset = new Vector2(-300, 150);
         public static Vector2 RTriggerOffset = new Vector2( 300, 150);
+        public static Vector2 TextBoxOffset = new Vector2(0, -250);
+        public static Vector2 TextOffset = new Vector2(90, 40);
+
 
         Texture2D KeyTexture;
 
@@ -48,11 +53,20 @@ namespace Keyboard
         int FrameOnScreenY;
         int FrameOffScreenY;
         int FrameVelocityY;
+        
+        int TextIndex;
+        int StartIndex;
+
+        Sprite TextBox;
+        Sprite Cursor;
 
         Sprite LTrigger;
         Sprite RTrigger;
 
         KeyboardMode Mode;
+
+        bool CursorInFlash;
+        double CursorFlashTimer;
 
         public bool IsActive { get { return CurrentStatus != KeyboardStatus.Inactive; } }
 
@@ -97,11 +111,28 @@ namespace Keyboard
             RTrigger = new Sprite(textures.RTrigger);
             RTrigger.Origin = new Vector2(RTrigger.Width / 2, RTrigger.Height / 2);
 
+            TextBox = new Sprite(textures.TextBox);
+            TextBox.Origin = new Vector2(TextBox.Width / 2, TextBox.Height / 2);
+
+            Cursor = new Sprite(textures.Cursor);
+            Cursor.Color = colors.Cursor;
 
             CurrentStatus = KeyboardStatus.Inactive;
             Mode = KeyboardMode.Normal;
 
+            TextIndex = 0;
+            StartIndex = 0;
+
             InitializeKeys(colors);
+
+            ResetCursorFlashTimer();
+        }
+
+        //Needs to be reset (or "forced on") whenever you scroll the cursor
+        private void ResetCursorFlashTimer()
+        {
+            CursorInFlash = false;
+            CursorFlashTimer = CursorFlashTimerSetting;
         }
 
         private void InitializeKeys(KeyboardColors colors)
@@ -166,6 +197,18 @@ namespace Keyboard
                 aKey.Update(gameTime);
             }
 
+            UpdatePositions();
+
+            //So you can't use the keyboard while it's entering or leaving
+            if (CurrentStatus == KeyboardStatus.Active)
+            {
+                UpdateActive(gameTime);
+            }
+        }
+
+        //Updates positions relative to frame
+        private void UpdatePositions()
+        {
             BackCircle.Position.X = Frame.FramePosition.X + (Frame.Width / 2.0f);
             BackCircle.Position.Y = Frame.FramePosition.Y + (Frame.Height / 2.0f);
             
@@ -174,16 +217,23 @@ namespace Keyboard
 
             RTrigger.Position.X = Frame.FramePosition.X + (Frame.Width / 2.0f) + RTriggerOffset.X;
             RTrigger.Position.Y = Frame.FramePosition.Y + (Frame.Height / 2.0f) + RTriggerOffset.Y;
-            
-            //So you can't use the keyboard while it's entering or leaving
-            if (CurrentStatus == KeyboardStatus.Active)
+
+            TextBox.Position.X = Frame.FramePosition.X + (Frame.Width / 2.0f) + TextBoxOffset.X;
+            TextBox.Position.Y = Frame.FramePosition.Y + (Frame.Height / 2.0f) + TextBoxOffset.Y;
+        }
+
+        private void UpdateActive(GameTime gameTime)
+        {
+            UpdateInput(gameTime);
+
+            CursorFlashTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            if (CursorFlashTimer <= 0)
             {
-                UpdateInput(gameTime);
+                CursorFlashTimer = CursorFlashTimerSetting;
+                CursorInFlash = !CursorInFlash;
             }
-
-            
-
-            
+         
         }
 
         private void UpdateInput(GameTime gameTime)
@@ -225,10 +275,12 @@ namespace Keyboard
                     InputManager.SetRumble(PlayerIndex.One, 100.0f, 0.0f);
 
                     //add the pressed key to our typed messege
-                     WhatTyped += CurrentKey.GetText(Mode);
+                    WhatTyped = WhatTyped.Insert(TextIndex,CurrentKey.GetText(Mode));
+                    TextIndex++;
 
                     //press the key, to kick start the key press "animation"
-                     CurrentKey.Press();
+                    CurrentKey.Press();
+                    ResetCursorFlashTimer();
                 }
             }
 
@@ -238,14 +290,37 @@ namespace Keyboard
                 InputManager.SetRumble(PlayerIndex.One, 100.0f, 0.0f);
 
                 //remove a key to our typed messege
-                if (WhatTyped.Length > 0)
-                    WhatTyped = WhatTyped.Remove(WhatTyped.Length - 1, 1);
+                if (TextIndex >0)
+                {
+                    WhatTyped = WhatTyped.Remove(TextIndex - 1, 1);
+                    TextIndex--;
+                }
+                //We want to force the cursor to display even if nothing is deleted, so the user can get his bearings
+                ResetCursorFlashTimer();
             }
 
             //Y adds a space
             if (InputManager.YPressed(PlayerIndex.One))
             {
-                WhatTyped += " ";
+                ResetCursorFlashTimer();
+                WhatTyped = WhatTyped.Insert(TextIndex, " ");
+                TextIndex++;
+            }
+
+            if (InputManager.DPadLeftPressed(PlayerIndex.One) || InputManager.LBPressed(PlayerIndex.One))
+            {
+                ResetCursorFlashTimer();
+                TextIndex--;
+                if (TextIndex < 0)
+                    TextIndex = 0;
+            }
+
+            if (InputManager.DPadRightPressed(PlayerIndex.One) || InputManager.RBPressed(PlayerIndex.One))
+            {
+                ResetCursorFlashTimer();
+                TextIndex++;
+                if (TextIndex > WhatTyped.Length)
+                    TextIndex = WhatTyped.Length;
             }
 
             
@@ -321,11 +396,54 @@ namespace Keyboard
 
             LTrigger.Draw(spriteBatch);
             RTrigger.Draw(spriteBatch);
-            
+            TextBox.Draw(spriteBatch);
+
+            DrawText(spriteBatch);
 
             
+        }
 
-            spriteBatch.DrawString(Font, WhatTyped, new Vector2(Frame.FramePosition.X + 20, Frame.FramePosition.Y + 40), InputTextColor);
+        private void Correct()
+        {
+            if (StartIndex > TextIndex)
+            {
+                StartIndex--;
+                Correct();
+            }
+
+            float CursorPoint = Font.MeasureString(WhatTyped.Substring(StartIndex, TextIndex - StartIndex)).X;
+            if (CursorPoint > TextBoxSize)
+            {
+                StartIndex++;
+                Correct();
+            }
+            
+        }
+
+        private void DrawText(SpriteBatch spriteBatch)
+        {
+            Correct();
+            
+            
+            float CursorPoint = Font.MeasureString(WhatTyped.Substring(StartIndex, TextIndex - StartIndex)).X;
+           
+            String DisplayText = WhatTyped.Substring(StartIndex);
+            int DisplayLength = DisplayText.Length;
+
+            while (Font.MeasureString(DisplayText).X > TextBoxSize)
+            {
+
+                DisplayLength--;
+                DisplayText = WhatTyped.Substring(StartIndex, DisplayLength);
+            }
+
+            spriteBatch.DrawString(Font, DisplayText, Frame.FramePosition + TextOffset, InputTextColor);
+
+            if (!CursorInFlash)
+            {
+                Cursor.Position = Frame.FramePosition + TextOffset + new Vector2(CursorPoint, 0);
+                Cursor.Draw(spriteBatch);
+            }
         }
 
         private void RenderKeys(SpriteBatch spriteBatch)
