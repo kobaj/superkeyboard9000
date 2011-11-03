@@ -24,7 +24,9 @@ namespace Keyboard
                 BackCircle = content.Load<Texture2D>("Keyboard/Graphics/backcircle"),
                 Key = content.Load<Texture2D>("Keyboard/Graphics/key"),
                 LTrigger = content.Load<Texture2D>("Keyboard/Graphics/lTrigger"),
-                RTrigger = content.Load<Texture2D>("Keyboard/Graphics/rTrigger")
+                RTrigger = content.Load<Texture2D>("Keyboard/Graphics/rTrigger"),
+                TextBox = content.Load<Texture2D>("Keyboard/Graphics/TextBox"),
+                Cursor = content.Load<Texture2D>("Keyboard/Graphics/Cursor")
             };
 
             //Blue scheme
@@ -37,7 +39,9 @@ namespace Keyboard
                 CurrentKey = new Color(39,78,125),
                 KeyText = Color.White,
                 InputText = Color.Black,
-                CurrentKeyPressed = new Color(27, 34, 114) //Leaving this the same as current key for now
+                CurrentKeyPressed = new Color(27, 34, 114),
+                TextBox = new Color(255,255,255),
+                Cursor = new Color(0,0,0)
             };
 
             //you handle sprites in a different way than I, so I was a bit confused.

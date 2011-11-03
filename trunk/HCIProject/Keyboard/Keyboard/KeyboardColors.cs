@@ -16,6 +16,8 @@ namespace Keyboard
         public Color CurrentKeyPressed;
         public Color KeyText;
         public Color InputText;
+        public Color TextBox;
+        public Color Cursor;
 
         //Add more as necessary
     }
