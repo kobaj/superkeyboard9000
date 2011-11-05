@@ -19,6 +19,7 @@ namespace Keyboard
 
         //Images of butttons on Xbox controller
         public Texture2D LTrigger;
-        public Texture2D RTrigger; 
+        public Texture2D RTrigger;
+        public Texture2D ATrigger;
     }
 }

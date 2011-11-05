@@ -16,11 +16,18 @@ namespace Keyboard
         public const double magicNumber = Math.PI / 13.0D; // 0.24166096923076923076923076923077D; //2pi / 26;
         public const int TextBoxSize = 700;
         public const double CursorFlashTimerSetting = 550;
-        public static Vector2 LTriggerOffset = new Vector2(-300, 150);
-        public static Vector2 RTriggerOffset = new Vector2( 300, 150);
+
+        //arrays make everything better. trust me. sleep. *pats*
+        public static Vector2[] TriggerOffset = {new Vector2( 300, -100), //a (see TriggerName)
+                                                 new Vector2( 300, -250), //b
+                                                 new Vector2( -300, -100), //x
+                                                 new Vector2( -300, -250), //y
+                                                 new Vector2(-300, 90), //left
+                                                 new Vector2( 300, 90)}; //right
+        public static int NumberOfTriggers = 6;
+
         public static Vector2 TextBoxOffset = new Vector2(0, -250);
         public static Vector2 TextOffset = new Vector2(90, 40);
-
 
         Texture2D KeyTexture;
 
@@ -60,8 +67,9 @@ namespace Keyboard
         Sprite TextBox;
         Sprite Cursor;
 
-        Sprite LTrigger;
-        Sprite RTrigger;
+        //Sprite LTrigger;
+        //Sprite RTrigger;
+        Trigger[] Triggers = new Trigger[6];
 
         KeyboardMode Mode;
 
@@ -105,11 +113,25 @@ namespace Keyboard
 
             Frame = new KeyboardFrame(200, FrameOffScreenY, textures.Frame, colors.Frame);
 
-            LTrigger = new Sprite(textures.LTrigger);
-            LTrigger.Origin = new Vector2(LTrigger.Width / 2, LTrigger.Height / 2);
-
-            RTrigger = new Sprite(textures.RTrigger);
-            RTrigger.Origin = new Vector2(RTrigger.Width / 2, RTrigger.Height / 2);
+            //change these once we have all 4 buttons.
+            Triggers[(int)TriggerName.A] = new Trigger(new Sprite(textures.ATrigger),
+                new Vector2(textures.ATrigger.Width / 2, textures.ATrigger.Height / 2),
+                "Select");
+            Triggers[(int)TriggerName.B] = new Trigger(new Sprite(textures.ATrigger),
+    new Vector2(textures.ATrigger.Width / 2, textures.ATrigger.Height / 2),
+    "Back");
+            Triggers[(int)TriggerName.X] = new Trigger(new Sprite(textures.ATrigger),
+    new Vector2(textures.ATrigger.Width / 2, textures.ATrigger.Height / 2),
+    "BackSpace");
+            Triggers[(int)TriggerName.Y] = new Trigger(new Sprite(textures.ATrigger),
+    new Vector2(textures.ATrigger.Width / 2, textures.ATrigger.Height / 2),
+    "Space");
+            Triggers[(int)TriggerName.Left] = new Trigger(new Sprite(textures.LTrigger),
+    new Vector2(textures.LTrigger.Width / 2, textures.LTrigger.Height / 2),
+    "Characters");
+            Triggers[(int)TriggerName.Right] = new Trigger(new Sprite(textures.RTrigger),
+    new Vector2(textures.RTrigger.Width / 2, textures.RTrigger.Height / 2),
+    "Capitalize");
 
             TextBox = new Sprite(textures.TextBox);
             TextBox.Origin = new Vector2(TextBox.Width / 2, TextBox.Height / 2);
@@ -173,6 +195,12 @@ namespace Keyboard
             }
 
             Mode = KeyboardMode.Normal;
+
+            //triggers
+            /*for (int i = 0; i < NumberOfTriggers; i++)
+                Triggers[i].SetState(State.notpressed);*/
+            Triggers[(int)TriggerName.Left].SetState(State.notpressed);
+            Triggers[(int)TriggerName.Right].SetState(State.notpressed);
         }
 
         public void Update(GameTime gameTime)
@@ -211,12 +239,15 @@ namespace Keyboard
         {
             BackCircle.Position.X = Frame.FramePosition.X + (Frame.Width / 2.0f);
             BackCircle.Position.Y = Frame.FramePosition.Y + (Frame.Height / 2.0f);
-            
-            LTrigger.Position.X = Frame.FramePosition.X + (Frame.Width / 2.0f) + LTriggerOffset.X;
-            LTrigger.Position.Y = Frame.FramePosition.Y + (Frame.Height / 2.0f) + LTriggerOffset.Y;
 
-            RTrigger.Position.X = Frame.FramePosition.X + (Frame.Width / 2.0f) + RTriggerOffset.X;
-            RTrigger.Position.Y = Frame.FramePosition.Y + (Frame.Height / 2.0f) + RTriggerOffset.Y;
+            //told you arrays make everything better.
+            for (int i = 0; i < NumberOfTriggers; i++)
+            {
+                Triggers[i].SetLocation(new Vector2(
+                    Frame.FramePosition.X + (Frame.Width / 2.0f) + TriggerOffset[i].X,
+                    Frame.FramePosition.Y + (Frame.Width / 2.0f) + TriggerOffset[i].Y));
+
+            }
 
             TextBox.Position.X = Frame.FramePosition.X + (Frame.Width / 2.0f) + TextBoxOffset.X;
             TextBox.Position.Y = Frame.FramePosition.Y + (Frame.Height / 2.0f) + TextBoxOffset.Y;
@@ -238,26 +269,32 @@ namespace Keyboard
 
         private void UpdateInput(GameTime gameTime)
         {
-            
-
             if (InputManager.LeftTriggerPressed(PlayerIndex.One))
+            {
                 Mode = KeyboardMode.Symbols;
+                Triggers[(int)TriggerName.Left].SetState(State.pressed);
+            }
             else if (InputManager.RightTriggerPressed(PlayerIndex.One))
+            {
                 Mode = KeyboardMode.Caps;
+                Triggers[(int)TriggerName.Right].SetState(State.pressed);
+            }
 
             double rotation = InputManager.GetLeftPolar(PlayerIndex.One).getAngle();
             double roundedIndexValue = Math.Round(rotation / magicNumber); //very important number.
             
             //Adjustment for an edge case;
             if (roundedIndexValue >= 26)
+            {
                 roundedIndexValue -= 26;
+            }
             
             Key CurrentKey = null;
 
             if (roundedIndexValue < 26)
                 CurrentKey = Keys[(int)roundedIndexValue];
             else//Should never reach here
-                Console.WriteLine("ERROR");
+                Console.WriteLine("ERROR" + roundedIndexValue);
 
 
             if (CurrentKey != null)
@@ -284,6 +321,11 @@ namespace Keyboard
                 }
             }
 
+            if(InputManager.APressed(PlayerIndex.One))
+                    Triggers[(int)TriggerName.A].SetState(State.pressed);
+            if (InputManager.AReleased(PlayerIndex.One))
+                Triggers[(int)TriggerName.A].SetState(State.notpressed);
+
             //and subtraction
             if (InputManager.XPressed(PlayerIndex.One))
             {
@@ -297,7 +339,11 @@ namespace Keyboard
                 }
                 //We want to force the cursor to display even if nothing is deleted, so the user can get his bearings
                 ResetCursorFlashTimer();
+
+                Triggers[(int)TriggerName.X].SetState(State.pressed);
             }
+            if (InputManager.XReleased(PlayerIndex.One))
+                Triggers[(int)TriggerName.X].SetState(State.notpressed);
 
             //Y adds a space
             if (InputManager.YPressed(PlayerIndex.One))
@@ -305,7 +351,11 @@ namespace Keyboard
                 ResetCursorFlashTimer();
                 WhatTyped = WhatTyped.Insert(TextIndex, " ");
                 TextIndex++;
+
+                Triggers[(int)TriggerName.Y].SetState(State.pressed);
             }
+            if (InputManager.YReleased(PlayerIndex.One))
+                Triggers[(int)TriggerName.Y].SetState(State.notpressed);
 
             if (InputManager.DPadLeftPressed(PlayerIndex.One) || InputManager.LBPressed(PlayerIndex.One))
             {
@@ -390,17 +440,13 @@ namespace Keyboard
             Frame.Draw(spriteBatch);
             BackCircle.Draw(spriteBatch);
 
-            
-
             RenderKeys(spriteBatch);
 
-            LTrigger.Draw(spriteBatch);
-            RTrigger.Draw(spriteBatch);
+            for (int i = 0; i < NumberOfTriggers; i++)
+                Triggers[i].Draw(spriteBatch, Font);
             TextBox.Draw(spriteBatch);
 
-            DrawText(spriteBatch);
-
-            
+            DrawText(spriteBatch);     
         }
 
         private void Correct()
@@ -423,8 +469,7 @@ namespace Keyboard
         private void DrawText(SpriteBatch spriteBatch)
         {
             Correct();
-            
-            
+                     
             float CursorPoint = Font.MeasureString(WhatTyped.Substring(StartIndex, TextIndex - StartIndex)).X;
            
             String DisplayText = WhatTyped.Substring(StartIndex);
@@ -448,7 +493,6 @@ namespace Keyboard
 
         private void RenderKeys(SpriteBatch spriteBatch)
         {
-
             foreach (Key aKey in Keys)
             {
                 Vector2 Position = new Vector2(Frame.FramePosition.X + (Frame.Width / 2.0f), Frame.FramePosition.Y + (Frame.Height / 2.0f));

@@ -216,17 +216,33 @@ namespace Keyboard
         {
             return (GetCurrentInput(player).a &&!GetPreviousInput(player).a);
         }
+        public static bool AReleased(PlayerIndex player)
+        {
+            return (GetPreviousInput(player).a && !GetCurrentInput(player).a);
+        }
         public static bool BPressed(PlayerIndex player)
         {
             return (GetCurrentInput(player).b && !GetPreviousInput(player).b);
+        }
+        public static bool BReleased(PlayerIndex player)
+        {
+            return (GetPreviousInput(player).b && !GetCurrentInput(player).b);
         }
         public static bool XPressed(PlayerIndex player)
         {
             return (GetCurrentInput(player).x && !GetPreviousInput(player).x);
         }
+        public static bool XReleased(PlayerIndex player)
+        {
+            return (GetPreviousInput(player).x && !GetCurrentInput(player).x);
+        }
         public static bool YPressed(PlayerIndex player)
         {
             return (GetCurrentInput(player).y && !GetPreviousInput(player).y);
+        }
+        public static bool YReleased(PlayerIndex player)
+        {
+            return (GetPreviousInput(player).y && !GetCurrentInput(player).y);
         }
 
         public static bool LBPressed(PlayerIndex player)

@@ -104,6 +104,7 @@
     <Compile Include="RenderArea.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="Keyboard.cs" />
+    <Compile Include="Trigger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Courier New.spritefont" />

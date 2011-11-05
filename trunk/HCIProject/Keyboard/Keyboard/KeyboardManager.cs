@@ -25,6 +25,7 @@ namespace Keyboard
                 Key = content.Load<Texture2D>("Keyboard/Graphics/key"),
                 LTrigger = content.Load<Texture2D>("Keyboard/Graphics/lTrigger"),
                 RTrigger = content.Load<Texture2D>("Keyboard/Graphics/rTrigger"),
+                ATrigger = content.Load<Texture2D>("Keyboard/graphics/aTrigger"),
                 TextBox = content.Load<Texture2D>("Keyboard/Graphics/TextBox"),
                 Cursor = content.Load<Texture2D>("Keyboard/Graphics/Cursor")
             };
