@@ -35,6 +35,8 @@ namespace Keyboard
         KeyboardStatus CurrentStatus;
 
         Sprite BackCircle;
+        bool InnerCircleShowing = true;
+        Sprite InnerCircle;
 
         String WhatTyped = "";
 
@@ -98,6 +100,9 @@ namespace Keyboard
             BackCircle.Origin = new Vector2(BackCircle.Width / 2.0f, BackCircle.Height / 2.0f);
             BackCircle.Color = colors.BackCircle;
 
+            InnerCircle = new Sprite(textures.InnerCircle, new Vector2(0, 0));
+            InnerCircle.Origin = new Vector2(InnerCircle.Width / 2.0f, InnerCircle.Height / 2.0f);
+            InnerCircle.Color = colors.CurrentKey;
     
             Fade = new Sprite(textures.Fade, new Vector2(0, 0));
             FadeColor = colors.Fade;
@@ -197,10 +202,10 @@ namespace Keyboard
             Mode = KeyboardMode.Normal;
 
             //triggers
-            /*for (int i = 0; i < NumberOfTriggers; i++)
-                Triggers[i].SetState(State.notpressed);*/
             Triggers[(int)TriggerName.Left].SetState(State.notpressed);
             Triggers[(int)TriggerName.Right].SetState(State.notpressed);
+
+            InnerCircleShowing = false;
         }
 
         public void Update(GameTime gameTime)
@@ -239,6 +244,10 @@ namespace Keyboard
         {
             BackCircle.Position.X = Frame.FramePosition.X + (Frame.Width / 2.0f);
             BackCircle.Position.Y = Frame.FramePosition.Y + (Frame.Height / 2.0f);
+
+            InnerCircle.Position = new Vector2(
+                Frame.FramePosition.X + (Frame.Width / 2.0f),
+                Frame.FramePosition.Y + (Frame.Height / 2.0f));
 
             //told you arrays make everything better.
             for (int i = 0; i < NumberOfTriggers; i++)
@@ -293,9 +302,14 @@ namespace Keyboard
 
             if (roundedIndexValue < 26)
                 CurrentKey = Keys[(int)roundedIndexValue];
-            else//Should never reach here
-                Console.WriteLine("ERROR" + roundedIndexValue);
+            else//Should never reach here //Whenever the users curser is not over a key its "here"
+            {
+                //yes, technically it should never reach here by the definition of integers. But I'm actually cheating the arctan function
+                //and the definition of NAN in order to indicate when the stick is not over a key
+                //could it be handled better with states or something? yes. But I like to think I'm clever in this ;).
 
+                InnerCircleShowing = true;
+            }
 
             if (CurrentKey != null)
             {
@@ -439,6 +453,9 @@ namespace Keyboard
             Fade.Draw(spriteBatch);
             Frame.Draw(spriteBatch);
             BackCircle.Draw(spriteBatch);
+
+            if (InnerCircleShowing)
+                InnerCircle.Draw(spriteBatch);
 
             RenderKeys(spriteBatch);
 
