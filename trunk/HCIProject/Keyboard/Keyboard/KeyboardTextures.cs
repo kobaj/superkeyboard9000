@@ -21,6 +21,11 @@ namespace Keyboard
         //Images of butttons on Xbox controller
         public Texture2D LTrigger;
         public Texture2D RTrigger;
-        public Texture2D ATrigger;
+        public Texture2D AButton;
+        public Texture2D BButton;
+        public Texture2D XButton;
+        public Texture2D YButton;
+        public Texture2D StartButton;
+        public Texture2D BackButton;
     }
 }

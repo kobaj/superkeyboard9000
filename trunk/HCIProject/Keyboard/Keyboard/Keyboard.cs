@@ -18,20 +18,26 @@ namespace Keyboard
         public const double CursorFlashTimerSetting = 550;
 
         //arrays make everything better. trust me. sleep. *pats*
-        public static Vector2[] TriggerOffset = {new Vector2( 300, -100), //a (see TriggerName)
-                                                 new Vector2( 300, -250), //b
-                                                 new Vector2( -300, -100), //x
-                                                 new Vector2( -300, -250), //y
-                                                 new Vector2(-300, 90), //left
-                                                 new Vector2( 300, 90)}; //right
-        public static int NumberOfTriggers = 6;
+        public static Vector2[] TriggerOffset = {new Vector2( 300, -100), //aButton (see TriggerName)
+                                                 new Vector2( 300, -250), //bButton
+                                                 new Vector2( -300, -100), //xButton
+                                                 new Vector2( -300, -250), //yButton
+                                                 new Vector2(-300, 90), //leftTrigger
+                                                 new Vector2( 300, 90),//rightTrigger
+                                                 new Vector2(-100, 150),//backButton
+                                                 new Vector2( 100, 150)};//startButton 
+        public static int NumberOfTriggers = 8;
 
+        Trigger[] Triggers = new Trigger[NumberOfTriggers];
+        
         public static Vector2 TextBoxOffset = new Vector2(0, -250);
-        public static Vector2 TextOffset = new Vector2(90, 40);
-
+        public static Vector2 TextCursorOffset = new Vector2(90, 40);
+        public static Vector2 TextOffset = new Vector2(0, -4);
         Texture2D KeyTexture;
 
-        SpriteFont Font;
+        SpriteFont KeyFont;
+        SpriteFont InputFont;
+        SpriteFont LabelFont;
         KeyboardStatus CurrentStatus;
 
         Sprite BackCircle;
@@ -69,24 +75,25 @@ namespace Keyboard
         Sprite TextBox;
         Sprite Cursor;
 
-        //Sprite LTrigger;
-        //Sprite RTrigger;
-        Trigger[] Triggers = new Trigger[6];
-
         KeyboardMode Mode;
 
         bool CursorInFlash;
         double CursorFlashTimer;
 
+        bool ShowHelp;
+
         public bool IsActive { get { return CurrentStatus != KeyboardStatus.Inactive; } }
 
-        public Keyboard(KeyboardTextures textures, KeyboardColors colors, SpriteFont font)
+       
+        public Keyboard(KeyboardTextures textures, KeyboardColors colors,KeyboardFont fonts)
         {
             //If we get a chance, we should modify this to work with other resolutions
             InitializeRenderArea(0, 0, 1280, 720);
 
             //setup font
-            Font = font;
+            KeyFont = fonts.Keys;
+            LabelFont = fonts.Labels;
+            InputFont = fonts.InputText;
 
             KeyTextColor = colors.KeyText;
             InputTextColor = colors.InputText;
@@ -118,25 +125,7 @@ namespace Keyboard
 
             Frame = new KeyboardFrame(200, FrameOffScreenY, textures.Frame, colors.Frame);
 
-            //change these once we have all 4 buttons.
-            Triggers[(int)TriggerName.A] = new Trigger(new Sprite(textures.ATrigger),
-                new Vector2(textures.ATrigger.Width / 2, textures.ATrigger.Height / 2),
-                "Select");
-            Triggers[(int)TriggerName.B] = new Trigger(new Sprite(textures.ATrigger),
-    new Vector2(textures.ATrigger.Width / 2, textures.ATrigger.Height / 2),
-    "Back");
-            Triggers[(int)TriggerName.X] = new Trigger(new Sprite(textures.ATrigger),
-    new Vector2(textures.ATrigger.Width / 2, textures.ATrigger.Height / 2),
-    "BackSpace");
-            Triggers[(int)TriggerName.Y] = new Trigger(new Sprite(textures.ATrigger),
-    new Vector2(textures.ATrigger.Width / 2, textures.ATrigger.Height / 2),
-    "Space");
-            Triggers[(int)TriggerName.Left] = new Trigger(new Sprite(textures.LTrigger),
-    new Vector2(textures.LTrigger.Width / 2, textures.LTrigger.Height / 2),
-    "Characters");
-            Triggers[(int)TriggerName.Right] = new Trigger(new Sprite(textures.RTrigger),
-    new Vector2(textures.RTrigger.Width / 2, textures.RTrigger.Height / 2),
-    "Capitalize");
+            InitializeTriggers(textures);
 
             TextBox = new Sprite(textures.TextBox);
             TextBox.Origin = new Vector2(TextBox.Width / 2, TextBox.Height / 2);
@@ -150,9 +139,46 @@ namespace Keyboard
             TextIndex = 0;
             StartIndex = 0;
 
+            ShowHelp = true;
+
             InitializeKeys(colors);
 
             ResetCursorFlashTimer();
+        }
+
+        private void InitializeTriggers(KeyboardTextures textures)
+        {
+            Triggers[(int)TriggerName.A] = new Trigger(new Sprite(textures.AButton),
+               new Vector2(textures.AButton.Width / 2, textures.AButton.Height / 2),
+               "Select");
+
+            Triggers[(int)TriggerName.B] = new Trigger(new Sprite(textures.BButton),
+                new Vector2(textures.BButton.Width / 2, textures.BButton.Height / 2),
+                "Cancel");
+
+            Triggers[(int)TriggerName.X] = new Trigger(new Sprite(textures.XButton),
+                new Vector2(textures.XButton.Width / 2, textures.XButton.Height / 2),
+                "Backspace");
+
+            Triggers[(int)TriggerName.Y] = new Trigger(new Sprite(textures.YButton),
+                new Vector2(textures.YButton.Width / 2, textures.YButton.Height / 2),
+                "Space");
+
+            Triggers[(int)TriggerName.Left] = new Trigger(new Sprite(textures.LTrigger),
+                new Vector2(textures.LTrigger.Width / 2, textures.LTrigger.Height / 2),
+                "Symbols");
+
+            Triggers[(int)TriggerName.Right] = new Trigger(new Sprite(textures.RTrigger),
+                new Vector2(textures.RTrigger.Width / 2, textures.RTrigger.Height / 2),
+                "Capitals");
+
+            Triggers[(int)TriggerName.Back] = new Trigger(new Sprite(textures.BackButton),
+                new Vector2(textures.StartButton.Width / 2, textures.StartButton.Height / 2),
+                "Toggle Help");
+
+            Triggers[(int)TriggerName.Start] = new Trigger(new Sprite(textures.StartButton),
+                new Vector2(textures.BackButton.Width / 2, textures.BackButton.Height / 2),
+                "Enter");
         }
 
         //Needs to be reset (or "forced on") whenever you scroll the cursor
@@ -172,7 +198,7 @@ namespace Keyboard
                 double roundedIndexValue = Math.Round(rotation / magicNumber); //very important number.
                 float finalRotation = (float)(roundedIndexValue * magicNumber);
 
-                Keys[i] =new Key(KeyTexture, Alphabet[i], Symbols[i], Font, colors,finalRotation,i);
+                Keys[i] =new Key(KeyTexture, Alphabet[i], Symbols[i], KeyFont, colors,finalRotation,i);
             }
 
         }
@@ -387,6 +413,15 @@ namespace Keyboard
                     TextIndex = WhatTyped.Length;
             }
 
+
+            if (InputManager.StartPressed(PlayerIndex.One))
+            {
+                Leave();
+            }
+            if (InputManager.BackPressed(PlayerIndex.One))
+            {
+                ShowHelp = !ShowHelp;
+            }
             
         }
 
@@ -457,13 +492,19 @@ namespace Keyboard
             if (InnerCircleShowing)
                 InnerCircle.Draw(spriteBatch);
 
-            RenderKeys(spriteBatch);
-
-            for (int i = 0; i < NumberOfTriggers; i++)
-                Triggers[i].Draw(spriteBatch, Font);
-            TextBox.Draw(spriteBatch);
-
+            DrawKeys(spriteBatch);
+            DrawTriggers(spriteBatch);
             DrawText(spriteBatch);     
+        }
+
+        private void DrawTriggers(SpriteBatch spriteBatch)
+        {
+            if (ShowHelp)
+            {
+                for (int i = 0; i < NumberOfTriggers; i++)
+                    Triggers[i].Draw(spriteBatch, LabelFont);
+            }
+
         }
 
         private void Correct()
@@ -474,7 +515,7 @@ namespace Keyboard
                 Correct();
             }
 
-            float CursorPoint = Font.MeasureString(WhatTyped.Substring(StartIndex, TextIndex - StartIndex)).X;
+            float CursorPoint = InputFont.MeasureString(WhatTyped.Substring(StartIndex, TextIndex - StartIndex)).X;
             if (CursorPoint > TextBoxSize)
             {
                 StartIndex++;
@@ -485,30 +526,32 @@ namespace Keyboard
 
         private void DrawText(SpriteBatch spriteBatch)
         {
+            TextBox.Draw(spriteBatch);
+
             Correct();
                      
-            float CursorPoint = Font.MeasureString(WhatTyped.Substring(StartIndex, TextIndex - StartIndex)).X;
+            float CursorPoint = InputFont.MeasureString(WhatTyped.Substring(StartIndex, TextIndex - StartIndex)).X;
            
             String DisplayText = WhatTyped.Substring(StartIndex);
             int DisplayLength = DisplayText.Length;
 
-            while (Font.MeasureString(DisplayText).X > TextBoxSize)
+            while (InputFont.MeasureString(DisplayText).X > TextBoxSize)
             {
 
                 DisplayLength--;
                 DisplayText = WhatTyped.Substring(StartIndex, DisplayLength);
             }
 
-            spriteBatch.DrawString(Font, DisplayText, Frame.FramePosition + TextOffset, InputTextColor);
+            spriteBatch.DrawString(InputFont, DisplayText, Frame.FramePosition + TextCursorOffset + TextOffset, InputTextColor);
 
             if (!CursorInFlash)
             {
-                Cursor.Position = Frame.FramePosition + TextOffset + new Vector2(CursorPoint, 0);
+                Cursor.Position = Frame.FramePosition + TextCursorOffset + new Vector2(CursorPoint, 0);
                 Cursor.Draw(spriteBatch);
             }
         }
 
-        private void RenderKeys(SpriteBatch spriteBatch)
+        private void DrawKeys(SpriteBatch spriteBatch)
         {
             foreach (Key aKey in Keys)
             {
