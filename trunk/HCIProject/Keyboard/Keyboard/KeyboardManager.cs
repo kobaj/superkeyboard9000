@@ -22,6 +22,7 @@ namespace Keyboard
                 Frame = content.Load<Texture2D>("Keyboard/Graphics/Frame"),
                 Fade = content.Load<Texture2D>("Keyboard/Graphics/Fade"),
                 BackCircle = content.Load<Texture2D>("Keyboard/Graphics/backcircle"),
+                InnerCircle = content.Load<Texture2D>("keyboard/Graphics/innercircle"),
                 Key = content.Load<Texture2D>("Keyboard/Graphics/key"),
                 LTrigger = content.Load<Texture2D>("Keyboard/Graphics/lTrigger"),
                 RTrigger = content.Load<Texture2D>("Keyboard/Graphics/rTrigger"),

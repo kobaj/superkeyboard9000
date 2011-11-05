@@ -13,6 +13,7 @@ namespace Keyboard
         //Add more textures as necessary
         //that I will
         public Texture2D BackCircle;
+        public Texture2D InnerCircle;
         public Texture2D Key;
         public Texture2D TextBox;
         public Texture2D Cursor;
