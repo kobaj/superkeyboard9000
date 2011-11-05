@@ -63,10 +63,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Keyboard\Courier New.spritefont">
+    <Compile Include="Keyboard\Fonts\Courier New.spritefont">
       <Name>Courier New</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
+      <SubType>Designer</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -110,15 +111,60 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Keyboard\Graphics\aTrigger.png">
-      <Name>aTrigger</Name>
+    <Compile Include="Keyboard\Graphics\innercircle.png">
+      <Name>innercircle</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Keyboard\Graphics\innercircle.png">
-      <Name>innercircle</Name>
+    <Compile Include="Keyboard\Graphics\aButton.png">
+      <Name>aButton</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Keyboard\Graphics\bButton.png">
+      <Name>bButton</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Keyboard\Graphics\xButton.png">
+      <Name>xButton</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Keyboard\Graphics\yButton.png">
+      <Name>yButton</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Keyboard\Fonts\Arial Black.spritefont">
+      <Name>Arial Black</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <SubType>Designer</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Keyboard\Fonts\Arial.spritefont">
+      <Name>Arial</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <SubType>Designer</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Keyboard\Graphics\startButton.png">
+      <Name>startButton</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Keyboard\Graphics\backButton.png">
+      <Name>backButton</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

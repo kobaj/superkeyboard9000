@@ -26,7 +26,12 @@ namespace Keyboard
                 Key = content.Load<Texture2D>("Keyboard/Graphics/key"),
                 LTrigger = content.Load<Texture2D>("Keyboard/Graphics/lTrigger"),
                 RTrigger = content.Load<Texture2D>("Keyboard/Graphics/rTrigger"),
-                ATrigger = content.Load<Texture2D>("Keyboard/graphics/aTrigger"),
+                AButton = content.Load<Texture2D>("Keyboard/Graphics/aButton"),
+                BButton = content.Load<Texture2D>("Keyboard/Graphics/bButton"),
+                XButton = content.Load<Texture2D>("Keyboard/Graphics/xButton"),
+                YButton = content.Load<Texture2D>("Keyboard/Graphics/yButton"),
+                BackButton = content.Load<Texture2D>("Keyboard/Graphics/backButton"),
+                StartButton = content.Load<Texture2D>("Keyboard/Graphics/startButton"),
                 TextBox = content.Load<Texture2D>("Keyboard/Graphics/TextBox"),
                 Cursor = content.Load<Texture2D>("Keyboard/Graphics/Cursor")
             };
@@ -46,10 +51,14 @@ namespace Keyboard
                 Cursor = new Color(0,0,0)
             };
 
-            //you handle sprites in a different way than I, so I was a bit confused.
-            //thus if you want to make a wraper for font like you did for sprites
-            //feel free, but this is my current quick and dirty font implamentation.
-            CurrentKeyboard = new Keyboard(Textures,Colors, content.Load<SpriteFont>("Keyboard/Courier New"));
+            KeyboardFont Fonts = new KeyboardFont()
+            {
+                Keys = content.Load<SpriteFont>("Keyboard/Fonts/Arial"),
+                InputText = content.Load<SpriteFont>("Keyboard/Fonts/Arial Black"),
+                Labels = content.Load<SpriteFont>("Keyboard/Fonts/Arial Black")
+            };
+
+            CurrentKeyboard = new Keyboard(Textures,Colors, Fonts);
             Active = false;
         }
 

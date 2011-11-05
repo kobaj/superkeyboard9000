@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Keyboard
 {
-    public enum TriggerName {A, B, X, Y, Left, Right};
+    public enum TriggerName {A, B, X, Y, Left, Right, Back, Start};
     public enum State{pressed, notpressed};
 
     public class Trigger
@@ -27,11 +27,6 @@ namespace Keyboard
             state = State.notpressed;
         }
 
-        /*public void SetOrigin(Vector2 orig)
-        {
-            origin = orig;
-        }*/
-
         public void SetLocation(Vector2 local)
         {
             image.Position = local;
@@ -48,6 +43,8 @@ namespace Keyboard
             //so dunno if you'll read this. But I had another idea of showing a 'depressed' button
             //instead of simply changing the color. But I don't have your art style/skill/assets, 
             //so I'll leave that up to you?
+
+            //>>Seems like too much work :p
 
             if (stringLength == Vector2.Zero)
                 stringLength = Font.MeasureString(name);
