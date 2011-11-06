@@ -553,10 +553,14 @@ namespace Keyboard
 
         private void DrawKeys(SpriteBatch spriteBatch)
         {
+            bool odd = false;
+
             foreach (Key aKey in Keys)
             {
+                odd = !odd;
+
                 Vector2 Position = new Vector2(Frame.FramePosition.X + (Frame.Width / 2.0f), Frame.FramePosition.Y + (Frame.Height / 2.0f));
-                aKey.Draw(Mode, Position, spriteBatch);
+                aKey.Draw(Mode, Position, spriteBatch, odd);
             }
         }
 

@@ -106,7 +106,7 @@ namespace Keyboard
 
 
 
-        public void Draw(KeyboardMode mode, Vector2 offset, SpriteBatch spriteBatch)
+        public void Draw(KeyboardMode mode, Vector2 offset, SpriteBatch spriteBatch, bool odd)
         {
             Color CurrentColor = Color.White;
             Representation.Scale = 1;
@@ -134,13 +134,25 @@ namespace Keyboard
 
             String text = GetText(mode);
            
+            const string vowels = "aeiou";
+            Color oldKeyTextColor = KeyTextColor;
+            if (text.Count(chr => vowels.Contains(char.ToLower(chr))) != 0)
+            {
+                KeyTextColor = Microsoft.Xna.Framework.Color.LightGreen;
+                //alternatively
+                //KeyTextColor.G = (byte)(KeyTextColor.G - (byte)80);
+            }
+            else if (odd)
+            {
+                KeyTextColor = Microsoft.Xna.Framework.Color.LightGray;
+                //alternatively
+                //KeyTextColor.B = (byte)(100);
+            }
 
             Vector2 TextOffset = Font.MeasureString(text) / 2;
             spriteBatch.DrawString(Font, text, TextPosition + offset - TextOffset, KeyTextColor);
 
-            
+            KeyTextColor = oldKeyTextColor;
         }
-
-
     }
 }
