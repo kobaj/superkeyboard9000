@@ -1,10 +1,10 @@
+Content\Background.xnb
 Content\Keyboard\Graphics\Fade.xnb
 Content\Keyboard\Graphics\Frame.xnb
 Content\Keyboard\Graphics\backcircle.xnb
+Content\Keyboard\Graphics\key.xnb
 Content\Keyboard\Graphics\lTrigger.xnb
 Content\Keyboard\Graphics\rTrigger.xnb
-Content\Background.xnb
-Content\Keyboard\Graphics\key.xnb
 Content\Keyboard\Graphics\TextBox.xnb
 Content\Keyboard\Graphics\Cursor.xnb
 Content\Keyboard\Graphics\innercircle.xnb
@@ -12,8 +12,8 @@ Content\Keyboard\Graphics\aButton.xnb
 Content\Keyboard\Graphics\bButton.xnb
 Content\Keyboard\Graphics\xButton.xnb
 Content\Keyboard\Graphics\yButton.xnb
+Content\Keyboard\Graphics\startButton.xnb
+Content\Keyboard\Graphics\backButton.xnb
 Content\Keyboard\Fonts\Courier New.xnb
 Content\Keyboard\Fonts\Arial Black.xnb
 Content\Keyboard\Fonts\Arial.xnb
-Content\Keyboard\Graphics\startButton.xnb
-Content\Keyboard\Graphics\backButton.xnb
