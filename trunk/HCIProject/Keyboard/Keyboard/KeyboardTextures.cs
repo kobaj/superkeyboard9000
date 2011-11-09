@@ -27,5 +27,8 @@ namespace Keyboard
         public Texture2D YButton;
         public Texture2D StartButton;
         public Texture2D BackButton;
+
+        public Texture2D arrow;
+        public Texture2D ExtraLetters;
     }
 }

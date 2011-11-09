@@ -33,7 +33,10 @@ namespace Keyboard
                 BackButton = content.Load<Texture2D>("Keyboard/Graphics/backButton"),
                 StartButton = content.Load<Texture2D>("Keyboard/Graphics/startButton"),
                 TextBox = content.Load<Texture2D>("Keyboard/Graphics/TextBox"),
-                Cursor = content.Load<Texture2D>("Keyboard/Graphics/Cursor")
+                Cursor = content.Load<Texture2D>("Keyboard/Graphics/Cursor"),
+
+                arrow = content.Load<Texture2D>("Keyboard/Graphics/arrow"),
+                ExtraLetters = content.Load<Texture2D>("Keyboard/Graphics/up")
             };
 
             //Blue scheme
