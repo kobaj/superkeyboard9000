@@ -13,12 +13,21 @@ namespace Keyboard
 
     public class Keyboard : RenderArea
     {
+        bool overFlow = false;
+        Vector2[] extraLetOffset = { new Vector2(375, -250), //right
+                                       new Vector2(-375, -250) };  //left
+        Sprite extraLet;
+        Sprite extraLet2; //dumb spritebatch...
+        bool Password = false;
+
+        Sprite Arrow;
+
         public const double magicNumber = Math.PI / 13.0D; // 0.24166096923076923076923076923077D; //2pi / 26;
-        public const int TextBoxSize = 700;
-        public const double CursorFlashTimerSetting = 550;
+        private const int TextBoxSize = 700;
+        private const double CursorFlashTimerSetting = 550;
 
         //arrays make everything better. trust me. sleep. *pats*
-        public static Vector2[] TriggerOffset = {new Vector2( 300, -100), //aButton (see TriggerName)
+        private static Vector2[] TriggerOffset = {new Vector2( 300, -100), //aButton (see TriggerName)
                                                  new Vector2( 300, -250), //bButton
                                                  new Vector2( -300, -100), //xButton
                                                  new Vector2( -300, -250), //yButton
@@ -26,13 +35,13 @@ namespace Keyboard
                                                  new Vector2( 300, 90),//rightTrigger
                                                  new Vector2(-100, 150),//backButton
                                                  new Vector2( 100, 150)};//startButton 
-        public static int NumberOfTriggers = 8;
+        private static int NumberOfTriggers = 8;
 
         Trigger[] Triggers = new Trigger[NumberOfTriggers];
         
-        public static Vector2 TextBoxOffset = new Vector2(0, -250);
-        public static Vector2 TextCursorOffset = new Vector2(90, 40);
-        public static Vector2 TextOffset = new Vector2(0, -4);
+        private static Vector2 TextBoxOffset = new Vector2(0, -250);
+        private static Vector2 TextCursorOffset = new Vector2(90, 40);
+        private static Vector2 TextOffset = new Vector2(0, -4);
         Texture2D KeyTexture;
 
         SpriteFont KeyFont;
@@ -87,6 +96,15 @@ namespace Keyboard
        
         public Keyboard(KeyboardTextures textures, KeyboardColors colors,KeyboardFont fonts)
         {
+            extraLet2 = new Sprite(textures.ExtraLetters, new Vector2(0));
+            extraLet2.Origin = new Vector2(extraLet2.Width / 2.0f, extraLet2.Height / 2.0f);
+
+            extraLet = new Sprite(textures.ExtraLetters, new Vector2(0));
+            extraLet.Origin = new Vector2(extraLet.Width / 2.0f, extraLet.Height / 2.0f);
+
+            Arrow = new Sprite(textures.arrow, new Vector2(0, 0));
+            Arrow.Origin = new Vector2(Arrow.Width / 2.0f, Arrow.Height / 2.0f);
+
             //If we get a chance, we should modify this to work with other resolutions
             InitializeRenderArea(0, 0, 1280, 720);
 
@@ -256,6 +274,7 @@ namespace Keyboard
                 aKey.Update(gameTime);
             }
 
+            //is this only supposed to be called once?
             UpdatePositions();
 
             //So you can't use the keyboard while it's entering or leaving
@@ -268,8 +287,22 @@ namespace Keyboard
         //Updates positions relative to frame
         private void UpdatePositions()
         {
+            //yes this is rotation in the positions update, but they never change so no worries
+            extraLet.Position.X = Frame.FramePosition.X + (Frame.Width / 2.0f);
+            extraLet.Position.Y = Frame.FramePosition.Y + (Frame.Height / 2.0f);
+            extraLet.Position += extraLetOffset[0]; //left
+            extraLet.Rotation = (float)(Math.PI / 2.0f);
+
+            extraLet2.Position.X = Frame.FramePosition.X + (Frame.Width / 2.0f);
+            extraLet2.Position.Y = Frame.FramePosition.Y + (Frame.Height / 2.0f);
+            extraLet2.Position += extraLetOffset[1]; //right
+            extraLet2.Rotation = (float)(-Math.PI / 2.0f);
+
             BackCircle.Position.X = Frame.FramePosition.X + (Frame.Width / 2.0f);
             BackCircle.Position.Y = Frame.FramePosition.Y + (Frame.Height / 2.0f);
+
+            //cheating :3
+            Arrow.Position = BackCircle.Position;
 
             InnerCircle.Position = new Vector2(
                 Frame.FramePosition.X + (Frame.Width / 2.0f),
@@ -304,6 +337,11 @@ namespace Keyboard
 
         private void UpdateInput(GameTime gameTime)
         {
+            if(InputManager.DPadUpPressed(PlayerIndex.One)) //this will eventually be changed to playertwo
+            {
+                Password = !Password;
+            }
+
             if (InputManager.LeftTriggerPressed(PlayerIndex.One))
             {
                 Mode = KeyboardMode.Symbols;
@@ -317,7 +355,9 @@ namespace Keyboard
 
             double rotation = InputManager.GetLeftPolar(PlayerIndex.One).getAngle();
             double roundedIndexValue = Math.Round(rotation / magicNumber); //very important number.
-            
+
+            Arrow.Rotation = (float)rotation;
+
             //Adjustment for an edge case;
             if (roundedIndexValue >= 26)
             {
@@ -447,6 +487,9 @@ namespace Keyboard
 
             if (MoveComplete && FadeComplete)
             {
+                WhatTyped = "";
+                TextIndex = 0;
+                StartIndex = 0;
                 CurrentStatus = KeyboardStatus.Inactive;
             }
 
@@ -495,6 +538,24 @@ namespace Keyboard
             DrawKeys(spriteBatch);
             DrawTriggers(spriteBatch);
             DrawText(spriteBatch);     
+
+            //must be AFTER drawtext
+            DrawArrows(spriteBatch);
+        }
+
+        private void DrawArrows(SpriteBatch spriteBatch)
+        {
+            Arrow.Draw(spriteBatch);
+
+            if (StartIndex > 0)
+            {
+                extraLet2.Draw(spriteBatch);
+            }
+
+            if (overFlow)
+            {
+                extraLet.Draw(spriteBatch);
+            }
         }
 
         private void DrawTriggers(SpriteBatch spriteBatch)
@@ -526,21 +587,45 @@ namespace Keyboard
 
         private void DrawText(SpriteBatch spriteBatch)
         {
+            if (Password)
+                TextBox.Color = Color.LightGray; //do you hate it when I shortcut this?
+            else
+                TextBox.Color = Color.White;
+
             TextBox.Draw(spriteBatch);
 
             Correct();
-                     
-            float CursorPoint = InputFont.MeasureString(WhatTyped.Substring(StartIndex, TextIndex - StartIndex)).X;
+
+            float CursorPoint = 0.0f;//InputFont.MeasureString(WhatTyped.Substring(StartIndex, TextIndex - StartIndex)).X;
            
             String DisplayText = WhatTyped.Substring(StartIndex);
             int DisplayLength = DisplayText.Length;
 
+            string replacment = "";
+            for (int i = 0; i < WhatTyped.Length; i++)
+            {
+                if (i == TextIndex - 1)
+                    replacment += WhatTyped[TextIndex - 1];
+                else
+                    replacment += "*";
+            }
+
+            if (Password)
+            {
+                    DisplayText = replacment.Substring(StartIndex);
+            }
+
+            overFlow = false;
             while (InputFont.MeasureString(DisplayText).X > TextBoxSize)
             {
-
+                overFlow = true;
                 DisplayLength--;
                 DisplayText = WhatTyped.Substring(StartIndex, DisplayLength);
+                if (Password)
+                    DisplayText = replacment.Substring(StartIndex, DisplayLength);
             }
+
+            CursorPoint = InputFont.MeasureString(DisplayText.Substring(0, TextIndex - StartIndex)).X;
 
             spriteBatch.DrawString(InputFont, DisplayText, Frame.FramePosition + TextCursorOffset + TextOffset, InputTextColor);
 
