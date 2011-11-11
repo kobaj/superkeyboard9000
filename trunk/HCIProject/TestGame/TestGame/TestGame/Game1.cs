@@ -290,7 +290,7 @@ namespace TestGame
         {
             bool Match = (text == testTexts[testTextIndex]);
 
-            return (type==KeyboardType.Super?"SK9000    ":"DEFAULT    ") + (passwordMode ? "PASSWORD MODE    " : "") + testTexts[testTextIndex] + "    " + text + "    " + (Match ? "Match" : "Not a Match") + "    " + stopWatch.ToString("###,###.00") + " ms";
+            return (type==KeyboardType.Super?"SK9000    ":"DEFAULT    ") + (passwordMode ? "PASSWORD MODE    " : "") + (type == KeyboardType.Super?"COLOR_" + colorSchemes[colorSchemeIndex].ToString():"") +"    " + testTexts[testTextIndex] + "    " + text + "    " + (Match ? "Match" : "Not a Match") + "    " + stopWatch.ToString("###,###.00") + " ms";
                 
         }
 
