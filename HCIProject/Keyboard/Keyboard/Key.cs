@@ -24,6 +24,8 @@ namespace Keyboard
         private Color SelectedColor;
         private Color PressedColor;
         private Color KeyTextColor;
+        private Color AlternateKeyTextColor;
+        private Color KeyVowelTextColor; 
 
         private double Timer;
         private const double TimerSetting = 100;
@@ -41,6 +43,8 @@ namespace Keyboard
             SelectedColor = colors.CurrentKey;
             PressedColor = colors.CurrentKeyPressed;
             KeyTextColor = colors.KeyText;
+            AlternateKeyTextColor = colors.AlternateKeyText;
+            KeyVowelTextColor = colors.KeyVowelText;
 
             Representation = new Sprite(texture);
             Representation.Origin = new Vector2(Representation.Width / 2, Representation.Height / 2);
@@ -138,13 +142,13 @@ namespace Keyboard
             Color oldKeyTextColor = KeyTextColor;
             if (text.Count(chr => vowels.Contains(char.ToLower(chr))) != 0)
             {
-                KeyTextColor = Microsoft.Xna.Framework.Color.LightGreen;
+                KeyTextColor = KeyVowelTextColor;
                 //alternatively
                 //KeyTextColor.G = (byte)(KeyTextColor.G - (byte)80);
             }
             else if (odd)
             {
-                KeyTextColor = Microsoft.Xna.Framework.Color.LightGray;
+                KeyTextColor = AlternateKeyTextColor;
                 //alternatively
                 //KeyTextColor.B = (byte)(100);
             }

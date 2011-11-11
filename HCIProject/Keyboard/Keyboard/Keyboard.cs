@@ -93,6 +93,7 @@ namespace Keyboard
 
         public bool IsActive { get { return CurrentStatus != KeyboardStatus.Inactive; } }
 
+        PlayerIndex Player;
        
         public Keyboard(KeyboardTextures textures, KeyboardColors colors,KeyboardFont fonts)
         {
@@ -164,6 +165,8 @@ namespace Keyboard
             ResetCursorFlashTimer();
         }
 
+       
+
         private void InitializeTriggers(KeyboardTextures textures)
         {
             Triggers[(int)TriggerName.A] = new Trigger(new Sprite(textures.AButton),
@@ -221,9 +224,14 @@ namespace Keyboard
 
         }
 
-        public void Enter()
+        public void Enter(PlayerIndex player, bool passwordMode)
         {
+            WhatTyped = "";
+            Player = player;
+            Password = passwordMode;
             CurrentStatus = KeyboardStatus.Entering;
+
+
         }
 
         public void Leave()
@@ -234,7 +242,7 @@ namespace Keyboard
 
         public void Reset()
         {
-            InputManager.SetRumble(PlayerIndex.One, 0.0f, 0.0f);
+            InputManager.SetRumble(Player, 0.0f, 0.0f);
 
             //Reset key states from selected to normal
             foreach (Key aKey in Keys)
@@ -254,8 +262,7 @@ namespace Keyboard
 
         public void Update(GameTime gameTime)
         {
-            //Give everything a blank slate
-            Reset();
+            
             
             switch (CurrentStatus)
             {
@@ -265,6 +272,12 @@ namespace Keyboard
                 case KeyboardStatus.Leaving:
                     LeaveUpdate(gameTime);
                     break;
+                case KeyboardStatus.Active:
+                    //Give everything a blank slate
+                    //But not when entering or leaving - trust me on this
+                    Reset();
+                    break;
+
             }
 
 
@@ -337,23 +350,18 @@ namespace Keyboard
 
         private void UpdateInput(GameTime gameTime)
         {
-            if(InputManager.DPadUpPressed(PlayerIndex.One)) //this will eventually be changed to playertwo
-            {
-                Password = !Password;
-            }
-
-            if (InputManager.LeftTriggerPressed(PlayerIndex.One))
+            if (InputManager.LeftTriggerPressed(Player))
             {
                 Mode = KeyboardMode.Symbols;
                 Triggers[(int)TriggerName.Left].SetState(State.pressed);
             }
-            else if (InputManager.RightTriggerPressed(PlayerIndex.One))
+            else if (InputManager.RightTriggerPressed(Player))
             {
                 Mode = KeyboardMode.Caps;
                 Triggers[(int)TriggerName.Right].SetState(State.pressed);
             }
 
-            double rotation = InputManager.GetLeftPolar(PlayerIndex.One).getAngle();
+            double rotation = InputManager.GetLeftPolar(Player).getAngle();
             double roundedIndexValue = Math.Round(rotation / magicNumber); //very important number.
 
             Arrow.Rotation = (float)rotation;
@@ -374,6 +382,7 @@ namespace Keyboard
                 //and the definition of NAN in order to indicate when the stick is not over a key
                 //could it be handled better with states or something? yes. But I like to think I'm clever in this ;).
 
+
                 InnerCircleShowing = true;
             }
 
@@ -387,9 +396,9 @@ namespace Keyboard
                 //addition of letters
                 //bleh you use a different way of blending colors Seph.
                 //Its ok. :3
-                if (InputManager.APressed(PlayerIndex.One))
+                if (InputManager.APressed(Player))
                 {
-                    InputManager.SetRumble(PlayerIndex.One, 100.0f, 0.0f);
+                    InputManager.SetRumble(Player, 100.0f, 0.0f);
 
                     //add the pressed key to our typed messege
                     WhatTyped = WhatTyped.Insert(TextIndex,CurrentKey.GetText(Mode));
@@ -401,15 +410,15 @@ namespace Keyboard
                 }
             }
 
-            if(InputManager.APressed(PlayerIndex.One))
+            if(InputManager.APressed(Player))
                     Triggers[(int)TriggerName.A].SetState(State.pressed);
-            if (InputManager.AReleased(PlayerIndex.One))
+            if (InputManager.AReleased(Player))
                 Triggers[(int)TriggerName.A].SetState(State.notpressed);
 
             //and subtraction
-            if (InputManager.XPressed(PlayerIndex.One))
+            if (InputManager.XPressed(Player))
             {
-                InputManager.SetRumble(PlayerIndex.One, 100.0f, 0.0f);
+                InputManager.SetRumble(Player, 100.0f, 0.0f);
 
                 //remove a key to our typed messege
                 if (TextIndex >0)
@@ -422,11 +431,11 @@ namespace Keyboard
 
                 Triggers[(int)TriggerName.X].SetState(State.pressed);
             }
-            if (InputManager.XReleased(PlayerIndex.One))
+            if (InputManager.XReleased(Player))
                 Triggers[(int)TriggerName.X].SetState(State.notpressed);
 
             //Y adds a space
-            if (InputManager.YPressed(PlayerIndex.One))
+            if (InputManager.YPressed(Player))
             {
                 ResetCursorFlashTimer();
                 WhatTyped = WhatTyped.Insert(TextIndex, " ");
@@ -434,10 +443,10 @@ namespace Keyboard
 
                 Triggers[(int)TriggerName.Y].SetState(State.pressed);
             }
-            if (InputManager.YReleased(PlayerIndex.One))
+            if (InputManager.YReleased(Player))
                 Triggers[(int)TriggerName.Y].SetState(State.notpressed);
 
-            if (InputManager.DPadLeftPressed(PlayerIndex.One) || InputManager.LBPressed(PlayerIndex.One))
+            if (InputManager.DPadLeftPressed(Player) || InputManager.LBPressed(Player))
             {
                 ResetCursorFlashTimer();
                 TextIndex--;
@@ -445,7 +454,7 @@ namespace Keyboard
                     TextIndex = 0;
             }
 
-            if (InputManager.DPadRightPressed(PlayerIndex.One) || InputManager.RBPressed(PlayerIndex.One))
+            if (InputManager.DPadRightPressed(Player) || InputManager.RBPressed(Player))
             {
                 ResetCursorFlashTimer();
                 TextIndex++;
@@ -454,11 +463,18 @@ namespace Keyboard
             }
 
 
-            if (InputManager.StartPressed(PlayerIndex.One))
+            if (InputManager.StartPressed(Player))
             {
                 Leave();
             }
-            if (InputManager.BackPressed(PlayerIndex.One))
+            if (InputManager.BPressed(Player))
+            {
+                //When canceling text should be reset
+                TextIndex = 0;
+                WhatTyped = "";
+                Leave();
+            }
+            if (InputManager.BackPressed(Player))
             {
                 ShowHelp = !ShowHelp;
             }
@@ -487,7 +503,6 @@ namespace Keyboard
 
             if (MoveComplete && FadeComplete)
             {
-                WhatTyped = "";
                 TextIndex = 0;
                 StartIndex = 0;
                 CurrentStatus = KeyboardStatus.Inactive;
@@ -522,6 +537,11 @@ namespace Keyboard
             }
 
             Frame.Update(gameTime);
+        }
+
+        public String GetText()
+        {
+            return WhatTyped;
         }
 
         protected override void Draw(SpriteBatch spriteBatch)
@@ -588,7 +608,7 @@ namespace Keyboard
         private void DrawText(SpriteBatch spriteBatch)
         {
             if (Password)
-                TextBox.Color = Color.LightGray; //do you hate it when I shortcut this?
+                TextBox.Color = Color.LightGray; //do you hate it when I shortcut this? -> Kind of X_X
             else
                 TextBox.Color = Color.White;
 
