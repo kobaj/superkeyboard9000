@@ -327,6 +327,15 @@ namespace Keyboard
             return DPadDownPressed(player) || DownAnalogPressed(player);
         }
 
+        public static bool LStickClickedIn(PlayerIndex player)
+        {
+            return (GetCurrentInput(player).lin && !GetPreviousInput(player).lin);
+        }
+        public static bool RStickClickedIn(PlayerIndex player)
+        {
+            return (GetCurrentInput(player).rin && !GetPreviousInput(player).rin);
+        }
+
         //what are the min and max values? is it just 0 and 100?
         public static void SetRumble(PlayerIndex player,float left, float right)
         {

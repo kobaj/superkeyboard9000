@@ -37,6 +37,9 @@ namespace Keyboard
         public bool ddown;
         public bool dleft;
 
+        public bool lin;
+        public bool rin;
+
         public Input()
         {
             a = false;
@@ -54,6 +57,9 @@ namespace Keyboard
             dright = false;
             ddown = false;
             dleft = false;
+
+            lin = false;
+            rin = false;
 
             lx = 0;
             ly = 0;
@@ -85,6 +91,9 @@ namespace Keyboard
             ddown = false;
             dleft = false;
 
+            lin = false;
+            rin = false;
+
             lx = 0;
             ly = 0;
 
@@ -114,6 +123,8 @@ namespace Keyboard
             newInput.dup = dup;
             newInput.dleft = dleft;
             newInput.dright = dright;
+            newInput.lin = lin;
+            newInput.rin = rin;
 
             return newInput;
         }
@@ -181,6 +192,18 @@ namespace Keyboard
                 back = true;
             else
                 back = false;
+
+            if (currentState.Buttons.LeftStick == ButtonState.Pressed)
+                lin = true;
+            else
+                lin = false;
+
+            if (currentState.Buttons.RightStick == ButtonState.Pressed)
+                rin = true;
+            else
+                rin = false;
+
+
 
             lx = currentState.ThumbSticks.Left.X;
             ly = currentState.ThumbSticks.Left.Y;

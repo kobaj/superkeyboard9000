@@ -107,9 +107,6 @@
     <Compile Include="Keyboard.cs" />
     <Compile Include="Trigger.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Courier New.spritefont" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--
