@@ -337,7 +337,7 @@ namespace TestGame
             }
             else if (InputManager.XPressed(tester))
             {
-                DefaultKeyboardResult = Guide.BeginShowKeyboardInput(PlayerIndex.One, "Microsoft Keyboard", "Test the defualt Microsoft Keyboard", "", null, null,passwordMode);
+                DefaultKeyboardResult = Guide.BeginShowKeyboardInput(testee, "Microsoft Keyboard","", "", null, null,passwordMode);
                 keyboardType = KeyboardType.Default;
                 currentPhase = TestPhase.InKeyboard;
                 stopWatch = 0;
