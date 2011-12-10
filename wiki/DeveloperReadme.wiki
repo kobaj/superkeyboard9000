@@ -1,8 +1,6 @@
 #summary Readme for anyone who wants to use our keyboard's code.
 
-##########################
-#####Developer Readme#####
-##########################
+=Developer Readme=
 
 ==Requirements==
 ============
