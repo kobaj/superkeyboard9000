@@ -64,16 +64,17 @@
 
 3.You will need to add all graphical files to your main program's content project.
 
-  In Windows Explorer, navigate to the TestGameContent folder. TestGame -> TestGame -> TestGameContent
+In Windows Explorer, navigate to the TestGameContent folder. TestGame -> TestGame -> TestGameContent
 
-  Click and drag the Keyboard folder (inside TestGameContent) to your program's content project. (look at the TestGame project if this is confusing)
+Click and drag the Keyboard folder (inside TestGameContent) to your program's content project. (look at the TestGame project if this is confusing)
 
 4.Add "using Keyboard;" to your using statements in the C# file where you need to launch the keyboard.
 
 5.In your Update loop you will need to add this line "KeyboardManager.Update(gameTime);" to handle all Keyboard inputs. Feel free to use the InputManager for handling other input in your program.
 
 6.When you need to launch Super Keyboard 900 call "KeyboardManager.ShowKeyboard(x,y);"
-  where X is a player index indicating the controller that has control of the keyboard and y is boolean indicating whether the keyboard should enter in password mode.
+
+where X is a player index indicating the controller that has control of the keyboard and y is boolean indicating whether the keyboard should enter in password mode.
 
 7.Elsewhere in the code, you need to check for when the keyboard is inactive "if (!KeyboardManager.IsActive)"
 
